@@ -1,19 +1,20 @@
 import React, {ChangeEvent, FormEvent, useState} from "react";
-import {emailRegular} from "../../utils/refulars";
 import Grid from "@mui/material/Grid";
 import FormControl from "@mui/material/FormControl";
 import FormGroup from "@mui/material/FormGroup";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import {validateFormFields} from "../../utils/validate-form";
+import {createUser} from "../../scripts/api-services";
 
-type fieldsType = {
+export type RegistrationFieldsType = {
     email: string,
-    username: string,
     password: string,
+    username: string,
     repeatPassword: string,
 }
 
-const initState: fieldsType = {
+const initState: RegistrationFieldsType = {
     email: '',
     username: '',
     password: '',
@@ -21,8 +22,8 @@ const initState: fieldsType = {
 }
 
 export const Registration = () => {
-    const [fields, setFields] = useState<fieldsType>({...initState});
-    const [errors, setErrors] = useState<fieldsType>({...initState});
+    const [fields, setFields] = useState<RegistrationFieldsType>({...initState});
+    const [errors, setErrors] = useState<RegistrationFieldsType>({...initState});
 
 
     const onInputChange = ({target: {name, value}}: ChangeEvent<HTMLInputElement>) => {
@@ -30,35 +31,19 @@ export const Registration = () => {
         setErrors(prevState => ({...prevState, [name]: ''}));
     }
 
-    const isFormValid = () => {
-        const errors: fieldsType = {...initState};
-        if (!emailRegular.test(fields.email)) {
-            errors.email = 'Invalid email address';
-        }
-        if (fields.password.length < 8 || fields.password.length > 24) {
-            errors.password = 'Password should contain 8-24 symbols';
-        }
-        if (fields.password !== fields.repeatPassword) {
-            errors.repeatPassword = 'Passwords are not equal';
-        }
-        if (fields.username.length < 4) {
-            errors.username = 'Username is too short';
-        } else if (fields.username.length > 18) {
-            errors.username = 'Username is too long';
-        }
 
-        if (Object.values(errors).join('')) {
-            setErrors(errors);
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (isFormValid()) {
-            console.log(fields);
+        const errors = validateFormFields(fields);
+        if (errors) {
+            setErrors(errors as RegistrationFieldsType);
+        } else {
+            const newUser = await createUser(fields);
+            if (newUser) {
+                localStorage.setItem('userID', newUser.uid);
+            } else {
+                alert('Try again later')
+            }
         }
     }
 
@@ -67,7 +52,7 @@ export const Registration = () => {
         <Grid item justifyContent='center'>
             <FormControl>
                 <form onSubmit={onSubmit}>
-                    <FormGroup>
+                    <FormGroup sx={{width: '32ch'}}>
                         <TextField label='Email' margin='normal' name='email' onChange={onInputChange}
                                    value={fields.email}
                                    error={!!errors.email} helperText={errors.email}/>
@@ -76,11 +61,12 @@ export const Registration = () => {
                                    error={!!errors.username} helperText={errors.email}
                         />
                         <TextField type='password' label='Password' name='password' value={fields.password}
-                                   onChange={onInputChange} error={!!errors.password}
+                                   onChange={onInputChange} error={!!errors.password} size={'medium'}
                                    helperText={errors.password}
                                    margin='normal'
                         />
-                        <TextField type='password' label='Password' name='repeatPassword' value={fields.repeatPassword}
+                        <TextField type='password' label='Repeat password' name='repeatPassword'
+                                   value={fields.repeatPassword}
                                    onChange={onInputChange} error={!!errors.repeatPassword}
                                    helperText={errors.repeatPassword}
                                    margin='normal'

@@ -1,55 +1,48 @@
-import React, {ChangeEvent, FormEvent, useState} from 'react'
+import React, {ChangeEvent, FormEvent, useContext, useState} from 'react'
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import {emailRegular} from "../../utils/refulars";
+import {validateFormFields} from "../../utils/validate-form";
+import {FormLabel} from "@mui/material";
+import {Link} from "react-router-dom";
+import {AuthContext} from "../../providers/AuthProvider";
 
 
-type fieldsType = {
+export type LoginFieldsType = {
     email: string,
     password: string,
 }
 
 export const Login = () => {
-    const [fields, setFields] = useState<fieldsType>({
+    const authContext = useContext(AuthContext);
+    const [fields, setFields] = useState<LoginFieldsType>({
         email: '',
         password: '',
     })
-    const [formErrors, setFormErrors] = useState<fieldsType>({
+    const [formErrors, setFormErrors] = useState<LoginFieldsType>({
         email: '',
         password: '',
     });
+    const [error, setError] = useState<string>('');
+
     const onInputChange = ({target: {name, value}}: ChangeEvent<HTMLInputElement>) => {
         setFormErrors(prevState => ({...prevState, [name]: ''}));
         setFields(prevState => ({...prevState, [name]: value}));
     }
 
-    const isFormValid = () => {
-        const errors: fieldsType = {email: '', password: ''};
-        if (!fields.email) {
-            errors.email = 'Required';
-        } else if (!emailRegular.test(fields.email)) {
-            errors.email = 'Invalid email address';
-        }
-        if (!fields.password) {
-            errors.password = 'Required'
-        } else if (fields.password.length < 4) {
-            errors.password = 'Password is too short';
-        }
-        if (errors.email || errors.password) {
-            setFormErrors(errors);
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (isFormValid()) {
-            console.log('dadad')
+        const errors = validateFormFields(fields);
+        if (errors) {
+            setFormErrors(errors as LoginFieldsType);
+        } else {
+            // @ts-ignore
+            const loggedIn = await authContext.logIn(fields.email, fields.password);
+            if (!loggedIn) {
+                setError('Email or password is incorrect');
+            }
         }
     }
 
@@ -57,7 +50,7 @@ export const Login = () => {
         <Grid item justifyContent='center'>
             <FormControl>
                 <form onSubmit={onSubmit}>
-                    <FormGroup>
+                    <FormGroup sx={{width: '32ch'}}>
                         <TextField label="Email" margin="normal" name='email' onChange={onInputChange}
                                    value={fields.email}
                                    error={!!formErrors.email} helperText={formErrors.email}/>
@@ -69,8 +62,14 @@ export const Login = () => {
                         <Button type='submit' variant='contained' color='primary'>
                             Login
                         </Button>
+                        {error && <div>{error}</div>}
                     </FormGroup>
                 </form>
+                <FormLabel sx={{m: 2}}>
+                    <Grid container justifyContent='center' alignItems='center'>
+                        To register <Button><Link to='/register'>click here</Link></Button>
+                    </Grid>
+                </FormLabel>
             </FormControl>
         </Grid>
     </Grid>
