@@ -5,9 +5,20 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Grid from "@mui/material/Grid";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {useContext} from "react";
+import {AuthContext} from "../providers/AuthProvider";
 
-export function Header() {
+export const Header = () => {
+    const authContext = useContext(AuthContext);
+    const history = useNavigate();
+    const logOutHandler = async () => {
+        const isLoggedOut = await authContext?.logOut();
+        if (isLoggedOut) {
+            history('/login');
+        }
+    }
+
     return (
         <Box sx={{flexGrow: 1}}>
             <AppBar position="static">
@@ -18,7 +29,8 @@ export function Header() {
                     <Grid item sx={{flexGrow: 1, ml: 4}} alignItems='center'>
                         <Button color='inherit'>Messages</Button>
                     </Grid>
-                    <Button color="inherit"><Link to='login'>Login</Link></Button>
+                    {authContext?.user ? (<Button color="inherit" onClick={logOutHandler}>Log out</Button>)
+                        : (<Link to='/login'><Button color="inherit">Login</Button></Link>)}
                 </Toolbar>
             </AppBar>
         </Box>

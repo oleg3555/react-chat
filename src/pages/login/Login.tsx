@@ -6,8 +6,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {validateFormFields} from "../../utils/validate-form";
 import {FormLabel} from "@mui/material";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {AuthContext} from "../../providers/AuthProvider";
+import {FetchContext} from "../../providers/FetchProvider";
+import {ToastContext} from "../../providers/ToastProvider";
 
 
 export type LoginFieldsType = {
@@ -16,7 +18,10 @@ export type LoginFieldsType = {
 }
 
 export const Login = () => {
+    const history = useNavigate();
     const authContext = useContext(AuthContext);
+    const {setFetch} = useContext(FetchContext);
+    const {openToast} = useContext(ToastContext);
     const [fields, setFields] = useState<LoginFieldsType>({
         email: '',
         password: '',
@@ -25,7 +30,6 @@ export const Login = () => {
         email: '',
         password: '',
     });
-    const [error, setError] = useState<string>('');
 
     const onInputChange = ({target: {name, value}}: ChangeEvent<HTMLInputElement>) => {
         setFormErrors(prevState => ({...prevState, [name]: ''}));
@@ -38,17 +42,23 @@ export const Login = () => {
         if (errors) {
             setFormErrors(errors as LoginFieldsType);
         } else {
-            // @ts-ignore
-            const loggedIn = await authContext.logIn(fields.email, fields.password);
-            if (!loggedIn) {
-                setError('Email or password is incorrect');
+            setFetch(true);
+            const isLoggedIn = await authContext?.logIn(fields.email, fields.password);
+            if (!isLoggedIn) {
+                openToast('Email or password is incorrect', 'error');
+            } else {
+                history('/messages');
             }
+            setFetch(false);
         }
     }
 
     return <Grid container justifyContent='center'>
         <Grid item justifyContent='center'>
             <FormControl>
+                <FormLabel>
+                    <h2>Log In</h2>
+                </FormLabel>
                 <form onSubmit={onSubmit}>
                     <FormGroup sx={{width: '32ch'}}>
                         <TextField label="Email" margin="normal" name='email' onChange={onInputChange}
@@ -62,12 +72,11 @@ export const Login = () => {
                         <Button type='submit' variant='contained' color='primary'>
                             Login
                         </Button>
-                        {error && <div>{error}</div>}
                     </FormGroup>
                 </form>
                 <FormLabel sx={{m: 2}}>
                     <Grid container justifyContent='center' alignItems='center'>
-                        To register <Button><Link to='/register'>click here</Link></Button>
+                        To register <Link to='/register'><Button>click here</Button></Link>
                     </Grid>
                 </FormLabel>
             </FormControl>

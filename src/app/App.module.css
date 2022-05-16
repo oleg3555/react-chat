@@ -1,0 +1,26 @@
+.App {
+    flex-direction: column;
+    min-height: 100vh;
+    display: flex;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    margin: 1rem;
+    z-index: 1;
+}
+
+.copyright {
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    line-height: 1.8rem;
+    font-size: 1.2rem;
+    white-space: nowrap;
+}
+
+.disabled{
+    opacity: 0.6;
+    pointer-events: none;
+}

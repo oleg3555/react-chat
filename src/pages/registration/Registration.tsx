@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FormEvent, useState} from "react";
+import React, {ChangeEvent, FormEvent, useContext, useState} from "react";
 import Grid from "@mui/material/Grid";
 import FormControl from "@mui/material/FormControl";
 import FormGroup from "@mui/material/FormGroup";
@@ -6,6 +6,10 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {validateFormFields} from "../../utils/validate-form";
 import {createUser} from "../../scripts/api-services";
+import {FormLabel} from "@mui/material";
+import {useNavigate} from "react-router-dom";
+import {FetchContext} from "../../providers/FetchProvider";
+import {ToastContext} from "../../providers/ToastProvider";
 
 export type RegistrationFieldsType = {
     email: string,
@@ -22,6 +26,9 @@ const initState: RegistrationFieldsType = {
 }
 
 export const Registration = () => {
+    const history = useNavigate();
+    const {setFetch} = useContext(FetchContext);
+    const {openToast} = useContext(ToastContext);
     const [fields, setFields] = useState<RegistrationFieldsType>({...initState});
     const [errors, setErrors] = useState<RegistrationFieldsType>({...initState});
 
@@ -38,12 +45,15 @@ export const Registration = () => {
         if (errors) {
             setErrors(errors as RegistrationFieldsType);
         } else {
+            setFetch(true);
             const newUser = await createUser(fields);
             if (newUser) {
-                localStorage.setItem('userID', newUser.uid);
+                openToast('Registration was successful finished', 'success');
+                history('/login');
             } else {
-                alert('Try again later')
+                openToast('Registration failed, please try again later', 'error');
             }
+            setFetch(false);
         }
     }
 
@@ -51,6 +61,9 @@ export const Registration = () => {
     return <Grid container justifyContent='center'>
         <Grid item justifyContent='center'>
             <FormControl>
+                <FormLabel>
+                    <h2>Registration</h2>
+                </FormLabel>
                 <form onSubmit={onSubmit}>
                     <FormGroup sx={{width: '32ch'}}>
                         <TextField label='Email' margin='normal' name='email' onChange={onInputChange}
@@ -71,7 +84,6 @@ export const Registration = () => {
                                    helperText={errors.repeatPassword}
                                    margin='normal'
                         />
-
                         <Button type='submit' variant='contained' color='primary'>
                             Register
                         </Button>
