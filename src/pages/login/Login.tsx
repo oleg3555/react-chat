@@ -17,19 +17,18 @@ export type LoginFieldsType = {
     password: string,
 }
 
+const initState: LoginFieldsType = {
+    email: '',
+    password: '',
+}
+
 export const Login = () => {
     const history = useNavigate();
     const authContext = useContext(AuthContext);
     const {setFetch} = useContext(FetchContext);
     const {openToast} = useContext(ToastContext);
-    const [fields, setFields] = useState<LoginFieldsType>({
-        email: '',
-        password: '',
-    })
-    const [formErrors, setFormErrors] = useState<LoginFieldsType>({
-        email: '',
-        password: '',
-    });
+    const [fields, setFields] = useState<LoginFieldsType>({...initState})
+    const [formErrors, setFormErrors] = useState<LoginFieldsType>({...initState});
 
     const onInputChange = ({target: {name, value}}: ChangeEvent<HTMLInputElement>) => {
         setFormErrors(prevState => ({...prevState, [name]: ''}));
@@ -47,13 +46,13 @@ export const Login = () => {
             if (!isLoggedIn) {
                 openToast('Email or password is incorrect', 'error');
             } else {
-                history('/messages');
+                history('/dialogs');
             }
             setFetch(false);
         }
     }
 
-    return <Grid container justifyContent='center'>
+    return <Grid container justifyContent='center' alignItems='center' flex={1}>
         <Grid item justifyContent='center'>
             <FormControl>
                 <FormLabel>

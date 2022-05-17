@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import {validateFormFields} from "../../utils/validate-form";
 import {createUser} from "../../scripts/api-services";
 import {FormLabel} from "@mui/material";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {FetchContext} from "../../providers/FetchProvider";
 import {ToastContext} from "../../providers/ToastProvider";
 
@@ -89,6 +89,11 @@ export const Registration = () => {
                         </Button>
                     </FormGroup>
                 </form>
+                <FormLabel sx={{m: 2}}>
+                    <Grid container justifyContent='center' alignItems='center'>
+                        Back to <Link to='/login'><Button>Login</Button></Link>
+                    </Grid>
+                </FormLabel>
             </FormControl>
         </Grid>
     </Grid>

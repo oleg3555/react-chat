@@ -20,17 +20,19 @@ export const Header = () => {
     }
 
     return (
-        <Box sx={{flexGrow: 1}}>
-            <AppBar position="static">
+        <Box>
+            <AppBar position='static'>
                 <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ml: 2}}>
+                    <Typography variant='h6' component='div' sx={{ml: 2}}>
                         Chat App
                     </Typography>
                     <Grid item sx={{flexGrow: 1, ml: 4}} alignItems='center'>
-                        <Button color='inherit'>Messages</Button>
+                        {authContext?.user &&
+                        <Link to='/dialogs'><Button color='inherit'>Dialogs</Button></Link>
+                        }
                     </Grid>
-                    {authContext?.user ? (<Button color="inherit" onClick={logOutHandler}>Log out</Button>)
-                        : (<Link to='/login'><Button color="inherit">Login</Button></Link>)}
+                    {authContext?.user ? (<Button color='inherit' onClick={logOutHandler}>Log out</Button>)
+                        : (<Link to='/login'><Button color='inherit'>Login</Button></Link>)}
                 </Toolbar>
             </AppBar>
         </Box>

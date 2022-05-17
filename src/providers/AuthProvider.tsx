@@ -2,6 +2,7 @@ import React, {createContext, useEffect, useState} from "react";
 import {onAuthStateChanged, signOut} from 'firebase/auth';
 import {auth} from "../scripts/firebase-config";
 import {getUserById, logIn, UserType} from "../scripts/api-services";
+import {Loading} from "../components/loader/Loading";
 
 
 onAuthStateChanged(auth, (currentUser) => {
@@ -60,7 +61,7 @@ export const AuthProvider: React.FC<PropsType> = ({children}) => {
     }
 
     if (!state.isAuth) {
-        return null;
+        return <Loading/>;
     }
 
     return <AuthContext.Provider value={state.context}>{children}</AuthContext.Provider>
