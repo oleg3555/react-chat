@@ -1,0 +1,82 @@
+.wrapper {
+    clear: both;
+    float: left;
+    display: flex;
+    flex-direction: row;
+}
+
+.wrapper.right{
+    float: right;
+    flex-direction: row-reverse;
+}
+
+
+.data {
+    display: flex;
+    justify-content: space-around;
+}
+
+.message {
+    margin: 0.3rem 0;
+    display: block;
+    background-color: var(--secondary);
+    border-radius: 0.5rem 0.5rem 0.5rem 0;
+    position: relative;
+}
+
+.wrapper.right .message{
+    border-radius: 0.5rem 0.5rem 0 0.5rem;
+}
+
+.wrapper.right .message::after{
+    left: 100%;
+    right: 0;
+    background: radial-gradient(2.3rem at top right, transparent 49%, var(--secondary) 51%) no-repeat left bottom;
+}
+
+.message::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 100%;
+    display: block;
+    width: 1.15rem;
+    height: 1.2rem;
+    background: radial-gradient(2.3rem at top left, transparent 49%, var(--secondary) 51%) no-repeat right bottom;
+}
+
+.wrapper.right .avatar img{
+    left: 0;
+}
+
+.avatar img {
+    position: absolute;
+    right: 0;
+    bottom: 0.6rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 2rem;
+}
+
+
+.text {
+    margin: 0 1rem;
+}
+
+.name {
+    margin: 0.15rem 0 0 0.5rem;
+    color: var(--primary);
+}
+
+.time {
+    opacity: 0.4;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    margin: 0 0.3rem;
+}
+
+.avatar {
+    position: relative;
+    margin: 0 0.35rem;
+}

@@ -1,4 +1,4 @@
-import {setDoc, doc, getDoc} from 'firebase/firestore/lite';
+import {setDoc, doc, getDoc} from 'firebase/firestore';
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth'
 import {auth, db} from "./firebase-config";
 import {RegistrationFieldsType} from "../pages/registration/Registration";
