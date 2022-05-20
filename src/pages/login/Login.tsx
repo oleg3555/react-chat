@@ -10,6 +10,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {AuthContext} from "../../providers/AuthProvider";
 import {FetchContext} from "../../providers/FetchProvider";
 import {ToastContext} from "../../providers/ToastProvider";
+import {TOAST_VALUES} from "../../utils/constants";
 
 
 export type LoginFieldsType = {
@@ -31,8 +32,8 @@ export const Login = () => {
     const [formErrors, setFormErrors] = useState<LoginFieldsType>({...initState});
 
     const onInputChange = ({target: {name, value}}: ChangeEvent<HTMLInputElement>) => {
-        setFormErrors(prevState => ({...prevState, [name]: ''}));
-        setFields(prevState => ({...prevState, [name]: value}));
+        setFormErrors({...formErrors, [name]: ''});
+        setFields({...fields, [name]: value});
     }
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -44,7 +45,7 @@ export const Login = () => {
             setFetch(true);
             const isLoggedIn = await authContext?.logIn(fields.email, fields.password);
             if (!isLoggedIn) {
-                openToast('Email or password is incorrect', 'error');
+                openToast('Email or password is incorrect', TOAST_VALUES.error);
             } else {
                 history('/dialogs');
             }

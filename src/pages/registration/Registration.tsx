@@ -10,6 +10,7 @@ import {FormLabel} from "@mui/material";
 import {Link, useNavigate} from "react-router-dom";
 import {FetchContext} from "../../providers/FetchProvider";
 import {ToastContext} from "../../providers/ToastProvider";
+import {TOAST_VALUES} from "../../utils/constants";
 
 export type RegistrationFieldsType = {
     email: string,
@@ -34,8 +35,8 @@ export const Registration = () => {
 
 
     const onInputChange = ({target: {name, value}}: ChangeEvent<HTMLInputElement>) => {
-        setFields(prevState => ({...prevState, [name]: value}));
-        setErrors(prevState => ({...prevState, [name]: ''}));
+        setFields({...fields, [name]: value});
+        setErrors({...errors, [name]: ''});
     }
 
 
@@ -48,10 +49,10 @@ export const Registration = () => {
             setFetch(true);
             const newUser = await createUser(fields);
             if (newUser) {
-                openToast('Registration was successful finished', 'success');
+                openToast('Registration was successful finished', TOAST_VALUES.success);
                 history('/login');
             } else {
-                openToast('Registration failed, please try again later', 'error');
+                openToast('Registration failed, please try again later', TOAST_VALUES.error);
             }
             setFetch(false);
         }

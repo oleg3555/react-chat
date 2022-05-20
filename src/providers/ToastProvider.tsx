@@ -1,9 +1,10 @@
 import React, {createContext, useState} from "react";
+import {TOAST_VALUES} from "../utils/constants";
 
 
 export const ToastContext = createContext<ContextType>({
     text: '',
-    type: 'info',
+    type: TOAST_VALUES.info,
     openToast: (text: string, type: ToastType) => {},
     closeToast: () => {},
 });
@@ -13,7 +14,7 @@ export const ToastProvider: React.FC<PropsType> = ({children}) => {
     const [state, setState] = useState<StateType>({
         context: {
             text: '',
-            type: 'info',
+            type: TOAST_VALUES.info,
             openToast: openToastHandler,
             closeToast: closeToastHandler,
         }
@@ -30,7 +31,7 @@ export const ToastProvider: React.FC<PropsType> = ({children}) => {
     return <ToastContext.Provider value={state.context}>{children}</ToastContext.Provider>
 }
 
-type ToastType = 'error' | 'success' | 'warning' | 'info';
+type ToastType = keyof typeof TOAST_VALUES;
 
 type ContextType = {
     text: string,

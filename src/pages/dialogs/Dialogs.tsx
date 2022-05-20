@@ -1,4 +1,4 @@
-import {getDatabase, onValue, ref, set, push} from "firebase/database";
+import {getDatabase, ref, set, push, onChildAdded,} from "firebase/database";
 import {useEffect, useState} from "react";
 import styles from './Dialogs.module.css';
 import Message from "./message/Message";
@@ -9,22 +9,16 @@ const imgUrl = 'https://sun9-73.userapi.com/impf/c852036/v852036917/7aea3/sY5TQm
 export const Dialogs = () => {
     const db = getDatabase();
     const [messages, setMessages] = useState<Array<any>>([]);
+    const userId = '123245'
     useEffect(() => {
-        const distanceRef = ref(db, 'users/123245');
-        onValue(distanceRef, (snapshot) => {
-            const arr: Array<any> = [];
-            snapshot.forEach(el => {
-                arr.push(el.val());
-            })
-            setMessages(arr);
+        onChildAdded(ref(db, 'users/123245'), (data) => {
+            setMessages(prev => ([...prev, data.val()]));
         });
     }, [db]);
-    const userId = '123245'
 
-
-    async function writeUserData() {
+    const sendMessage = async (value: string) => {
         await set(push(ref(db, 'users/' + userId)), {
-            value: 'qwer1234',
+            value,
             username: 'Oleg',
         });
     }
@@ -39,10 +33,9 @@ export const Dialogs = () => {
                          time='22.00' isRight={true}/>
                 <Message avatar={imgUrl} name='Oleg' message='it ok' time='22.00' isRight={false}/>
             </div>
-            <SendMessageForm sendMessage={(value: string) => console.log(value)}/>
+            <SendMessageForm sendMessage={sendMessage}/>
         </div>
-        {/*<Button onClick={writeUserData}>Add</Button>*/}
-        {/*{JSON.stringify(messages)}*/}
-        {/*Dialogs*/}
+        {JSON.stringify(messages)}
+        Dialogs
     </div>
 }
