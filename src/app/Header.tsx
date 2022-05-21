@@ -27,9 +27,10 @@ export const Header = () => {
                         Chat App
                     </Typography>
                     <Grid item sx={{flexGrow: 1, ml: 4}} alignItems='center'>
-                        {authContext?.user &&
-                        <Link to='/dialogs'><Button color='inherit'>Dialogs</Button></Link>
-                        }
+                        {authContext?.user && <>
+                            <Link to='/dialogs'><Button color='inherit'>Dialogs</Button></Link>
+                            <Link to='/settings'><Button color='inherit'>Settings</Button></Link>
+                        </>}
                     </Grid>
                     {authContext?.user ? (<Button color='inherit' onClick={logOutHandler}>Log out</Button>)
                         : (<Link to='/login'><Button color='inherit'>Login</Button></Link>)}

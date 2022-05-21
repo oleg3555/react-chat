@@ -1,7 +1,7 @@
-import {setDoc, doc, getDoc} from 'firebase/firestore';
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth'
 import {auth, db} from "./firebase-config";
 import {RegistrationFieldsType} from "../pages/registration/Registration";
+import {ref, set, get, child} from "firebase/database";
 
 
 export type UserType = {
@@ -12,21 +12,20 @@ export type UserType = {
 
 export async function getUserById(userId: string) {
     try {
-        const snapshot = await getDoc(doc(db, 'users', userId));
-
-        return {...snapshot.data(), id: snapshot.id} as UserType;
+        const snapshot = await get(child(ref(db), `users/${userId}`));
+        if (snapshot.exists()) {
+            return {...snapshot.val(), id: snapshot.key} as UserType;
+        }
     } catch (error) {
         console.error(error);
-
-        return undefined;
     }
+    return undefined;
 }
 
 export const createUser = async (data: RegistrationFieldsType) => {
     try {
-        const {email, password, username} = data
-        const user = await createUserWithEmailAndPassword(auth, email, password);
-        await setDoc(doc(db, 'users', user.user.uid), {username, email});
+        const user = await createUserWithEmailAndPassword(auth, data.email, data.password);
+        await set(ref(db, `users/${user.user.uid}`), data);
         return user.user;
     } catch (error: any) {
         console.error(error);

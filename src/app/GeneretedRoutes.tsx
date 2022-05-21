@@ -4,6 +4,7 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import {Login} from "../pages/login/Login";
 import {Registration} from "../pages/registration/Registration";
 import {Dialogs} from "../pages/dialogs/Dialogs";
+import {Settings} from "../pages/settings/Settings";
 
 export const GeneratedRoutes = () => {
     const authContext = useContext(AuthContext);
@@ -11,6 +12,7 @@ export const GeneratedRoutes = () => {
     return <Routes>
         {authContext?.user ? (<>
             <Route path='/dialogs' element={<Dialogs/>}/>
+            <Route path='/settings' element={<Settings/>}/>
             <Route path='/' element={<Navigate to='/dialogs'/>}/>
         </>) : (<>
             <Route path='/login' element={<Login/>}/>

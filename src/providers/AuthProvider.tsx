@@ -36,7 +36,11 @@ export const AuthProvider: React.FC<PropsType> = ({children}) => {
     async function logInHandler(email: string, password: string) {
         const userId: string | undefined = await logIn(email, password);
         if (userId) {
-            await authMe(userId);
+            const user = await getUserById(userId);
+            if (!user) {
+                return false;
+            }
+            setState(prevState => ({...prevState, context: {...prevState.context, user}}));
         }
         return !!userId;
     }

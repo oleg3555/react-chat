@@ -12,8 +12,8 @@
     height: 73vh;
     border: 2px solid var(--secondary);
     box-shadow: 2px 2px 4px var(--secondary);
-    overflow-y: auto;
     border-radius: 0.5rem;
+    overflow-y: auto;
 }
 
 .messages {
