@@ -1,6 +1,7 @@
-import React, {createContext, useEffect, useState} from "react";
+import React, {createContext, useEffect, useRef, useState} from "react";
+import {ref, onChildChanged} from "firebase/database";
 import {onAuthStateChanged, signOut} from 'firebase/auth';
-import {auth} from "../scripts/firebase-config";
+import {auth, db} from "../scripts/firebase-config";
 import {getUserById, logIn, UserType} from "../scripts/api-services";
 import {Loading} from "../components/loader/Loading";
 
@@ -11,7 +12,6 @@ onAuthStateChanged(auth, (currentUser) => {
 
 export const AuthContext = createContext<ContextType | null>(null);
 
-
 export const AuthProvider: React.FC<PropsType> = ({children}) => {
     const [state, setState] = useState<StateType>({
         context: {
@@ -20,7 +20,8 @@ export const AuthProvider: React.FC<PropsType> = ({children}) => {
             logOut: logOutHandler,
         },
         isAuth: false,
-    })
+    });
+    const unsubscribe = useRef<any>(null);
 
     useEffect(() => {
         (async () => {
@@ -31,7 +32,24 @@ export const AuthProvider: React.FC<PropsType> = ({children}) => {
                 setState(prevState => ({...prevState, isAuth: true}));
             }
         })();
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        if (auth.currentUser && !unsubscribe.current) {
+            unsubscribe.current = onChildChanged(ref(db, `users/${auth.currentUser.uid}`), (data) => {
+                // @ts-ignore
+                setState(prevState => {
+                    const updatedUser = {...prevState.context.user, [data.key as keyof UserType]: data.val()};
+                    return {...prevState, context: {...prevState.context, user: updatedUser}};
+                })
+            })
+        }
+    }, [state.context]);
+
+    const removeAuthListener = () => {
+        unsubscribe.current();
+        unsubscribe.current = null
+    }
 
     async function logInHandler(email: string, password: string) {
         const userId: string | undefined = await logIn(email, password);
@@ -49,6 +67,7 @@ export const AuthProvider: React.FC<PropsType> = ({children}) => {
         try {
             await signOut(auth);
             setState((prevState) => ({...prevState, context: {...prevState.context, user: null}}));
+            removeAuthListener();
             return true;
         } catch (error: any) {
             console.error(error);

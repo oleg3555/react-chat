@@ -1,13 +1,14 @@
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth'
 import {auth, db} from "./firebase-config";
 import {RegistrationFieldsType} from "../pages/registration/Registration";
-import {ref, set, get, child} from "firebase/database";
+import {ref, set, get, child, update} from "firebase/database";
 
 
 export type UserType = {
     username: string,
     id: string,
-    email: string
+    email: string,
+    imageUrl: string,
 }
 
 export async function getUserById(userId: string) {
@@ -24,12 +25,22 @@ export async function getUserById(userId: string) {
 
 export const createUser = async (data: RegistrationFieldsType) => {
     try {
-        const user = await createUserWithEmailAndPassword(auth, data.email, data.password);
-        await set(ref(db, `users/${user.user.uid}`), data);
+        const {username, email, password} = data;
+        const user = await createUserWithEmailAndPassword(auth, email, password);
+        await set(ref(db, `users/${user.user.uid}`), {username, email, imageUrl: ''});
         return user.user;
     } catch (error: any) {
         console.error(error);
         return undefined;
+    }
+}
+
+
+export const updateCurrentUser = async (updatedFields: Partial<UserType>) => {
+    try {
+        await update(ref(db, `users/${auth.currentUser?.uid}`), {...updatedFields});
+    } catch (error: any) {
+        console.error(error.message);
     }
 }
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import styles from './Message.module.css';
+import blank_avatar from '../../../assests/blank_avatar.jpg';
 
 type messagePropsType = {
     isRight: boolean,
@@ -13,7 +14,7 @@ export function Message(props: messagePropsType) {
     return (
         <div className={`${styles.wrapper} ${props.isRight && styles.right}`}>
             <div className={styles.avatar}>
-                <img src={props.avatar} alt="avatar" width='45' height='45'/>
+                <img src={props.avatar || blank_avatar} alt="avatar" width='45' height='45'/>
             </div>
             <div className={styles.message}>
                 <div className={styles.name}>{props.name}</div>

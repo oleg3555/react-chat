@@ -11,7 +11,7 @@ export const GeneratedRoutes = () => {
 
     return <Routes>
         {authContext?.user ? (<>
-            <Route path='/dialogs' element={<Dialogs/>}/>
+            <Route path='/dialogs/*' element={<Dialogs/>}/>
             <Route path='/settings' element={<Settings/>}/>
             <Route path='/' element={<Navigate to='/dialogs'/>}/>
         </>) : (<>
