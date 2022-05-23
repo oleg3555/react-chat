@@ -33,7 +33,7 @@ export const DialogsUsers = () => {
     }, []);
 
     return (<div className={styles.users}>
-        {users.map(item => <NavLink key={item.id} to={`/dialogs/chat/${getChatId(item.id, auth.currentUser?.uid)}`}
+        {users.map(item => <NavLink key={item.id} to={`/dialogs/${getChatId(item.id, auth.currentUser?.uid)}`}
                                  className={({isActive}) => isActive ? styles.active : ''}>
             <Box component='div'
                  display='flex' alignItems='center'
