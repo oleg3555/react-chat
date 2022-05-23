@@ -10,8 +10,8 @@ export const Dialogs = () => {
         <DialogsUsers/>
         <Routes>
             <Route path='/:chatId' element={<Chat/>}/>
-            <Route path='/empty' element={<EmptyChat/>}/>
-            <Route path='/' element={<Navigate to='empty'/>}/>
+            <Route path='/empty/*' element={<EmptyChat/>}/>
+            <Route path='/*' element={<Navigate to='empty'/>}/>
         </Routes>
     </div>
 }
